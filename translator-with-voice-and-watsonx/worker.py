@@ -1,5 +1,8 @@
+import requests
 from ibm_watson_machine_learning.foundation_models.utils.enums import ModelTypes
 from ibm_watson_machine_learning.foundation_models import Model
+from ibm_watson_machine_learning.metanames import GenTextParamsMetaNames as GenParams
+from ibm_watson_machine_learning.foundation_models.utils.enums import DecodingMethods
 
 PROJECT_ID = "skills-network"
 
@@ -9,13 +12,10 @@ credentials = {
 
 model_id = "mistralai/mistral-medium-2505"
 
-from ibm_watson_machine_learning.metanames import GenTextParamsMetaNames as GenParams
-from ibm_watson_machine_learning.foundation_models.utils.enums import DecodingMethods
-
 parameters = {
     GenParams.DECODING_METHOD: DecodingMethods.GREEDY,
     GenParams.MIN_NEW_TOKENS: 1,
-    GenParams.MAX_NEW_TOKENS: 1024    
+    GenParams.MAX_NEW_TOKENS: 1024
 }
 
 model = Model(
@@ -33,17 +33,15 @@ def speech_to_text(audio_binary):
         'model': 'en-US_Multimedia',
     }
 
-    body = audio_binary
-
     response = requests.post(api_url, params=params, data=audio_binary).json()
 
     text = 'null'
 
     while bool(response.get('results')):
         print('Speech-to-Text response:', response)
-	    text = response.get('results').pop().get('alternatives').pop().get('transcript')
-	    print('recognised text: ', text)
-	    return text
+        text = response.get('results').pop().get('alternatives').pop().get('transcript')
+        print('recognised text: ', text)
+        return text
 
 def text_to_speech(text, voice=""):
     base_url = '...'
@@ -51,7 +49,7 @@ def text_to_speech(text, voice=""):
 
     if voice != "" and voice != "default":
         api_url += "&voice=" + voice
-    
+
     headers = {
         'Accept': 'audio/wav',
         'Content-Type': 'application/json',
